@@ -1,0 +1,88 @@
+%! Author = lwb
+%! Date = 11/5/19
+\documentclass{beamer}
+
+
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+
+\usetheme{Warsaw}
+
+%! pour avoir un sommaire avant chaque section
+\AtBeginSection[]
+{
+  \begin{frame}
+  \frametitle{Sommaire}
+  \tableofcontents[currentsection, hideothersubsections, pausesubsections]
+  \end{frame}
+}
+
+
+\title{Création d'UI pour le traitement de données: Présentation de Bokeh }
+\author{L. Bernardi}
+\institute{LLR }
+\date{Novembre 2019}
+
+\begin{document}
+    \begin{frame}
+        \titlepage
+    \end{frame}
+
+    \begin{frame}
+                \frametitle{Un exemple de titre}
+
+        \tableofcontents
+    \end{frame}
+
+    \section{Introduction}
+    \subsection{Cadre de cette présentation}
+    \begin{frame}
+        Visualisation de données, exploration de jeu de données et UI en python.
+    \end{frame}
+
+
+    \begin{frame}
+        \frametitle{Un exemple de titre}
+        \framesubtitle{avec un exemple de sous-titre}
+
+        Voila votre première page de présentation en LaTeX !
+    \end{frame}
+
+    \section{Tests de slides}
+
+    \begin{frame}[plain]
+        Page sans en-tête ni pied de page.
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Un exemple de titre}
+        \framesubtitle{avec un exemple de sous-titre}
+        Enfin, le texte ! :)
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \begin{center}
+            Texte non fragilisé, la \textbf{preuve}
+        \end{center}
+        \begin{verbatim}
+            Pour afficher cette page, j'ai utilisé ce code :
+            \begin{frame}[fragile]
+                Suivi de l'environnement verbatim :
+                \begin{verbatim}
+
+                \end{verbatim}
+            \end{frame}
+        \end{verbatim}
+    \end{frame}
+    \section{Les vrais slides !!}
+    \subsection{Introduction}
+    \begin{frame}
+        \frametitle{Un exemple de titre}
+        \framesubtitle{avec un exemple de sous-titre}
+        Enfin, le texte ! :)
+    \end{frame}
+
+\end{document}
+
