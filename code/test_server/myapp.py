@@ -3,11 +3,15 @@
 from random import random
 import time
 
-from bokeh.layouts import column
-from bokeh.models import Button
-from bokeh.palettes import RdYlBu3
-from bokeh.plotting import figure, curdoc
 from bokeh.models.sources import ColumnDataSource
+from bokeh.plotting import figure, curdoc
+from bokeh.layouts import row, layout,column
+from bokeh.models import Slider
+from bokeh.models.mappers import LinearColorMapper
+from bokeh.palettes import Spectral6, Dark2
+import numpy as np
+
+from bokeh.plotting import figure, show, output_file
 
 # create a plot and style its properties
 #p = figure(x_range=(0, 100), y_range=(0, 100), toolbar_location=None)
@@ -26,13 +30,13 @@ from bokeh.models.sources import ColumnDataSource
 
 # create a callback that will add a number in a random location
 
-import numpy as np
 
-from bokeh.plotting import figure, show, output_file
+N = 501
+x_0, y_0 = 0, 0
+x_1, y_1 = 10, 10
 
-N = 500
-x = np.linspace(0, 10, N)
-y = np.linspace(0, 10, N)
+x = np.linspace(x_0, x_1, N)
+y = np.linspace(y_0, y_1, N)
 xx, yy = np.meshgrid(x, y)
 
 # amplitude variation
@@ -56,34 +60,37 @@ d= A*B+C
 
 d_min_a = np.min(d)
 d_max_a = np.max(d)
-
-cds = ColumnDataSource({"data":d})
+d_step = 100
+cds = ColumnDataSource(data={"image":d})
 
 p = figure(tooltips=[("x", "$x"), ("y", "$y"), ("value", "@image")])
 p.x_range.range_padding = p.y_range.range_padding = 0
 
 # must give a vector of image data for image parameter
-image = p.image(image=[d], x=0, y=0, dw=10, dh=10, palette="Spectral11")
+image = p.image(image="image",
+                x=x_0,
+                y=y_0,
+                dw=x_1-x_0,
+                dh=y_1-y_0,
+                source=cds,
+                color_mapper = LinearColorMapper(low=d_min_a, high=d_max_a, palette=Spectral6))
 
-# add a button widget and configure with the call back
-button = Button(label="Press Me")
 
-max_i=10
-i=0
-print("OK")
-def callback():
-    global i,max_i
+def change_image_contrast(attr, old, new):
+    image.glyph.color_mapper.update(low=graph_min_slider.value, high=graph_max_slider.value)
+    image.trigger('glyph', image.glyph, image.glyph)
 
-    if i < max_i:
-        d_min = d_min_a+0.4*i/max_i*(d_max_a-d_min_a)
-        d_max = d_max_a-0.4*i/max_i*(d_max_a-d_min_a)
-        print(d_min,d_max)
-        image.data_source.data["image"] = np.where(d<d_min,d_min,np.where(d>d_max,d_max,d))
-        i += 1
-    else:
-        pass
 
-button.on_click(callback)
+graph_min_slider = Slider(title="Min", start=d_min_a, end=d_max_a, step=(d_max_a-d_min_a)/d_step, value=d_min_a)
+graph_max_slider = Slider(title="Max", start=d_min_a, end=d_max_a, step=(d_max_a-d_min_a)/d_step, value=d_max_a)
 
-# put the button and plot in a layout and add to the document
-curdoc().add_root(column(button, p))
+graph_min_slider.on_change('value', change_image_contrast)
+graph_max_slider.on_change('value', change_image_contrast)
+
+#fig = figure(plot_width=500, plot_height=500, x_range=(0, 10), y_range=(0, 10))
+
+#fig_im = fig.image(image=[np.random.randint(0, 100, (10, 10), dtype='int16')], x=[0], y=[0], dw=[10], dh=[10],
+#                  color_mapper=LinearColorMapper(low=0, high=100, palette=Greys9))
+sliders = column(graph_min_slider, graph_max_slider)#row(text, offset, amplitude, phase, freq)
+
+curdoc().add_root(column(p, sliders, width=800))
